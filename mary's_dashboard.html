@@ -1,0 +1,1184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guro Mary - Teacher Console</title>
+    <style>
+      :root {
+        --primary-color: #2b5c8f;
+        --accent-blue: #0ea5e9;
+        --success-green: #10b981;
+        --bg-color: #f4f7f6;
+        --card-bg: #ffffff;
+        --text-color: #333333;
+        --text-muted: #666666;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Top Meta Time Bar */
+      .top-time-bar {
+        background-color: var(--primary-color);
+        color: white;
+        text-align: center;
+        padding: 8px 0;
+        font-size: 0.9em;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .banner-container {
+        width: 100%;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      .banner-image {
+        width: 100%;
+        height: auto;
+        max-height: 400px;
+        object-fit: cover;
+        display: block;
+      }
+
+      .grid-container {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 20px;
+      }
+
+      @media (max-width: 768px) {
+        .grid-container {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: var(--card-bg);
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+      }
+
+      h2 {
+        color: var(--primary-color);
+        margin-top: 0;
+        border-bottom: 2px solid #eef2f5;
+        padding-bottom: 10px;
+      }
+
+      .student-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        background: #f9fbfd;
+        border-radius: 6px;
+        margin-bottom: 12px;
+        border-left: 4px solid var(--primary-color);
+      }
+
+      .btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.9em;
+      }
+      .btn:hover {
+        background-color: #1e436d;
+      }
+      .btn-success {
+        background-color: var(--success-green);
+      }
+      .btn-success:hover {
+        background-color: #0d9488;
+      }
+      .btn-close {
+        background-color: #718096;
+      }
+      .btn-close:hover {
+        background-color: #4a5568;
+      }
+
+      .badge {
+        background-color: #feebc8;
+        color: #c05621;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.8em;
+        font-weight: bold;
+      }
+
+      .submission-link {
+        color: var(--accent-blue);
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .submission-link:hover {
+        text-decoration: underline;
+      }
+
+      /* Form Styled Layout Components */
+      .grading-panel {
+        border: 1px solid #cbd5e1;
+        background: #f8fafc;
+        display: none; /* Triggers open smoothly via Grade Work action button */
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .form-label {
+        font-weight: 600;
+        font-size: 0.95em;
+        color: #475569;
+      }
+
+      .form-select,
+      .form-textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 0.95em;
+        box-sizing: border-box;
+        background-color: white;
+      }
+
+      .form-select:focus,
+      .form-textarea:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+      }
+
+      .chat-box {
+        background: #0b0f19;
+        border-radius: 10px;
+        height: 250px;
+        overflow-y: auto;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+
+      .message-row {
+        display: flex;
+        gap: 12px;
+        width: 100%;
+        align-items: flex-start;
+        box-sizing: border-box;
+      }
+      .message-row.mary-row {
+        justify-content: flex-end;
+      }
+      .message-row.michael-row {
+        justify-content: flex-start;
+      }
+
+      .chat-avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+      .mary-row .chat-avatar {
+        border: 2px solid var(--accent-blue);
+      }
+      .michael-row .chat-avatar {
+        border: 2px solid var(--success-green);
+      }
+
+      .message-content-wrapper {
+        display: flex;
+        flex-direction: column;
+        max-width: 70%;
+      }
+      .mary-row .message-content-wrapper {
+        align-items: flex-end;
+      }
+      .michael-row .message-content-wrapper {
+        align-items: flex-start;
+      }
+
+      .message-bubble {
+        padding: 10px 14px;
+        border-radius: 8px;
+        line-height: 1.4;
+        font-size: 0.9em;
+        color: #ffffff;
+        word-break: break-word;
+      }
+      .mary-row .message-bubble {
+        background: #1e293b;
+        border-right: 4px solid var(--accent-blue);
+      }
+      .michael-row .message-bubble {
+        background: #0284c7;
+        border-left: 4px solid var(--success-green);
+      }
+
+      .msg-sender {
+        display: block;
+        font-weight: bold;
+        font-size: 0.8em;
+        margin-bottom: 3px;
+      }
+      .msg-meta {
+        font-size: 0.7em;
+        color: rgba(255, 255, 255, 0.4);
+        margin-top: 4px;
+        display: block;
+      }
+
+      .mock-input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-top: 8px;
+        margin-bottom: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-time-bar" id="liveSystemClock">
+      Loading Portal Session Timestamp...
+    </div>
+
+    <div class="dashboard-container">
+      <div class="banner-container">
+        <img
+          src="images/grading.png"
+          alt="Guro Mary Grading Papers"
+          class="banner-image"
+        />
+      </div>
+
+      <div class="grid-container">
+        <main class="main-content">
+          <section class="card">
+            <h2>Mabuhay, Guro Mary!</h2>
+            <p>
+              Welcome to your central teacher console. Below are the submissions
+              awaiting your review and grading.
+            </p>
+          </section>
+
+          <section class="card">
+            <h2>Pending Submissions Queue</h2>
+            <div id="queueTableContainer">
+              <p style="color: var(--text-muted); font-style: italic">
+                No pending submissions in the pipeline currently.
+              </p>
+            </div>
+          </section>
+
+          <section class="card grading-panel" id="gradingPanel">
+            <h2
+              id="panelTitle"
+              style="
+                color: var(--primary-color);
+                border: none;
+                padding: 0;
+                margin-bottom: 5px;
+              "
+            >
+              Evaluate Submission
+            </h2>
+            <p
+              style="font-size: 0.9em; color: #475569; margin: 0"
+              id="panelMeta"
+            ></p>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="studentGrade"
+                  >Select Grade Score</label
+                >
+                <select id="studentGrade" class="form-select">
+                  <option value="" disabled selected>
+                    -- Choose a Grade --
+                  </option>
+                  <option value="A+">A+ (Magaling/Excellent)</option>
+                  <option value="A">A (Napakahusay)</option>
+                  <option value="B+">B+ (Mahusay)</option>
+                  <option value="B">B (Mabuti)</option>
+                  <option value="C">C (Katamtaman)</option>
+                  <option value="Passed">Passed (Pumasá)</option>
+                  <option value="Needs Revision">
+                    Needs Revision (Ulitin)
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="teacherNotes"
+                  >Written Correction Feedback Critique</label
+                >
+                <textarea
+                  id="teacherNotes"
+                  class="form-textarea"
+                  rows="4"
+                  placeholder="Provide translation coaching notes regarding verb prefixes or affix structural alignment rules..."
+                ></textarea>
+              </div>
+
+              <div
+                style="
+                  display: flex;
+                  gap: 10px;
+                  justify-content: flex-end;
+                  margin-top: 5px;
+                "
+              >
+                <button class="btn btn-close" onclick="closeGradingPanel()">
+                  Cancel
+                </button>
+                <button
+                  class="btn btn-success"
+                  onclick="processGradeSubmission()"
+                >
+                  Submit Evaluation
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2>Direct Conversation Log (Active Student: Michael)</h2>
+            <div class="chat-box" id="maryChatThread">
+              <div class="message-row mary-row">
+                <div class="message-content-wrapper">
+                  <div class="message-bubble">
+                    <span class="msg-sender" style="color: var(--accent-blue)"
+                      >Guro Mary</span
+                    >
+                    Drafted the responses for the layout review. Let me know if
+                    the affixes make sense!
+                    <span class="msg-meta">Saturday</span>
+                  </div>
+                </div>
+                <img
+                  src="images/profile_mary.png"
+                  alt="Mary"
+                  class="chat-avatar"
+                />
+              </div>
+            </div>
+          </section>
+
+          <!-- Upgraded Multi-Question Exam Administration Panel -->
+          <section
+            class="card"
+            style="border-color: var(--primary-color); background: #f0f4f8"
+          >
+            <h3
+              style="
+                margin-top: 0;
+                color: var(--primary-color);
+                border-bottom: 2px solid #eef2f5;
+                padding-bottom: 8px;
+              "
+            >
+              📋 Exam Administration Panel
+            </h3>
+            <p
+              style="
+                font-size: 0.85em;
+                color: var(--text-muted);
+                margin: 0 0 12px 0;
+              "
+            >
+              Compose an official multi-question reading evaluation module,
+              stack your questions, and deploy them to Michael's screen
+              instantly.
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 10px">
+              <div class="form-group">
+                <label class="form-label" style="font-size: 0.85em"
+                  >1. Reading Comprehension Passage</label
+                >
+                <textarea
+                  id="examReadingPassage"
+                  class="form-textarea"
+                  rows="3"
+                  style="font-size: 0.85em"
+                  placeholder="Type Tagalog reading context passage here..."
+                ></textarea>
+              </div>
+
+              <!-- Dynamic Staging Area Box -->
+              <div
+                id="stagedQuestionsTracker"
+                style="
+                  background: #e2e8f0;
+                  border-radius: 6px;
+                  padding: 10px;
+                  font-size: 0.85em;
+                  color: #334155;
+                  display: none;
+                  flex-direction: column;
+                  gap: 4px;
+                "
+              >
+                <strong>Staged Questions Pool:</strong>
+                <ol
+                  id="stagedList"
+                  style="margin: 5px 0 0 20px; padding: 0; font-weight: 600"
+                ></ol>
+              </div>
+
+              <div
+                style="
+                  border: 1px dashed #cbd5e1;
+                  padding: 12px;
+                  border-radius: 6px;
+                  background: white;
+                "
+              >
+                <div class="form-group">
+                  <label
+                    class="form-label"
+                    style="font-size: 0.85em; color: var(--primary-color)"
+                    >2. Current Item Question Text</label
+                  >
+                  <input
+                    type="text"
+                    id="examQuestionText"
+                    class="form-input"
+                    style="padding: 8px; font-size: 0.85em"
+                    placeholder="e.g., True or False: 'Mabuhay' is a standard greeting."
+                  />
+                </div>
+
+                <div class="form-group" style="margin-top: 8px">
+                  <label class="form-label" style="font-size: 0.85em"
+                    >3. Format Type Selector</label
+                  >
+                  <select
+                    id="examQuestionType"
+                    class="form-select"
+                    style="padding: 8px; font-size: 0.85em"
+                    onchange="toggleExamFormOptions(this.value)"
+                  >
+                    <option value="TF">True / False Format</option>
+                    <option value="MC">Multiple Choice Format</option>
+                  </select>
+                </div>
+
+                <div
+                  id="mcOptionsWrapper"
+                  style="
+                    display: none;
+                    flex-direction: column;
+                    gap: 6px;
+                    background: #f1f5f9;
+                    padding: 10px;
+                    border-radius: 6px;
+                    margin-top: 8px;
+                  "
+                >
+                  <input
+                    type="text"
+                    id="opt1"
+                    class="form-input"
+                    style="padding: 6px; font-size: 0.8em"
+                    placeholder="Option A text option"
+                  />
+                  <input
+                    type="text"
+                    id="opt2"
+                    class="form-input"
+                    style="padding: 6px; font-size: 0.8em"
+                    placeholder="Option B text option"
+                  />
+                  <input
+                    type="text"
+                    id="opt3"
+                    class="form-input"
+                    style="padding: 6px; font-size: 0.8em"
+                    placeholder="Option C text option"
+                  />
+                </div>
+
+                <div class="form-group" style="margin-top: 8px">
+                  <label class="form-label" style="font-size: 0.85em"
+                    >4. Verbatim Answer Key Match</label
+                  >
+                  <input
+                    type="text"
+                    id="examAnswerKey"
+                    class="form-input"
+                    style="padding: 8px; font-size: 0.85em"
+                    placeholder="e.g., True, False, or exact text matches"
+                  />
+                </div>
+
+                <button
+                  class="btn"
+                  style="
+                    width: 100%;
+                    margin-top: 10px;
+                    background: #475569;
+                    padding: 8px;
+                    font-size: 0.85em;
+                  "
+                  onclick="addQuestionToExamStagingPool()"
+                >
+                  ➕ Add Question to Exam Pack
+                </button>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" style="font-size: 0.85em"
+                  >5. Global Countdown Timer Allocation</label
+                >
+                <input
+                  type="number"
+                  id="examTimerDuration"
+                  class="form-input"
+                  style="padding: 8px; font-size: 0.85em"
+                  min="1"
+                  max="60"
+                  value="5"
+                  placeholder="Duration in minutes"
+                />
+              </div>
+
+              <button
+                class="btn btn-success"
+                style="width: 100%; margin-top: 5px; padding: 12px"
+                onclick="deployOfficialExam()"
+              >
+                🚀 Administer Exam Live
+              </button>
+            </div>
+          </section>
+        </main>
+
+        <aside class="sidebar">
+          <section class="card">
+            <h2>Active Projects</h2>
+            <p><strong>Current Portal:</strong> Tagalog Language Program</p>
+            <p><strong>Total Students:</strong> 1</p>
+          </section>
+
+          <section class="card">
+            <h2>Send Chat to Michael</h2>
+            <p
+              style="
+                font-size: 0.85em;
+                color: var(--text-muted);
+                margin: 0 0 8px 0;
+              "
+            >
+              Simulate Mary typing a response back to Michael's chat screen:
+            </p>
+            <input
+              type="text"
+              id="maryReplyText"
+              class="mock-input"
+              placeholder="Type message as Mary..."
+            />
+            <button class="btn" style="width: 100%" onclick="marySendChat()">
+              Send to Michael
+            </button>
+          </section>
+        </aside>
+      </div>
+    </div>
+
+    <script>
+      let activeGradingItem = null;
+
+      // Requirement (1): Clock Initialization Engine
+      function updateLiveClock() {
+        const now = new Date();
+        const options = {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        };
+        const dateString = now.toLocaleDateString("en-US", options);
+        const timeString = now.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+
+        document.getElementById("liveSystemClock").textContent =
+          `📅 ${dateString} | ⏰ ${timeString} (Manila Time)`;
+      }
+      setInterval(updateLiveClock, 1000);
+      updateLiveClock();
+
+      // Requirement (2): Build the dynamic list with accessible assignment links
+      function renderQueue() {
+        const container = document.getElementById("queueTableContainer");
+        let queue =
+          JSON.parse(localStorage.getItem("portal_submissions")) || [];
+
+        if (queue.length === 0) {
+          container.innerHTML = `<p style="color: var(--text-muted); font-style: italic;">No pending submissions in the pipeline currently.</p>`;
+          return;
+        }
+
+        container.innerHTML = "";
+        queue.forEach((item) => {
+          const row = document.createElement("div");
+          row.className = "student-row";
+
+          let targetDisplay = "";
+          if (item.taskType === "YouTube Video") {
+            targetDisplay = `<a href="${escapeHTML(item.payload)}" target="_blank" class="submission-link">🔗 Open Submitted Video Link</a>`;
+          } else {
+            // Generates a clickable link directly on the primary queue layout item row
+            targetDisplay = `<a href="uploads/${escapeHTML(item.payload)}" target="_blank" class="submission-link">📂 View Attached PDF (${escapeHTML(item.payload)})</a>`;
+          }
+
+          row.innerHTML = `
+                    <div>
+                        <strong>${item.student}</strong> <span class="badge" style="background-color: ${item.taskType === "YouTube Video" ? "rgba(239,68,68,0.15)" : "rgba(168,85,247,0.15)"}; color: ${item.taskType === "YouTube Video" ? "#ef4444" : "#a855f7"};">${item.taskType}</span>
+                        <div style="font-size: 0.9em; color: #475569; margin-top: 6px;">Submission Path: ${targetDisplay}</div>
+                        <div style="font-size: 0.75em; color: #94a3b8; margin-top: 4px;">Received at: ${item.timestamp}</div>
+                    </div>
+                    <button class="btn" onclick="openGradingPanel('${item.id}')">Grade Work</button>
+                `;
+          container.appendChild(row);
+        });
+      }
+
+      // Live Storage Events Synchronization
+      window.addEventListener("storage", function (e) {
+        if (e.key === "portal_submissions") {
+          renderQueue();
+        }
+        if (e.key === "michael_msg_trigger" && e.newValue) {
+          const data = JSON.parse(e.newValue);
+          alert("Michael sent a message");
+
+          const thread = document.getElementById("maryChatThread");
+          if (thread) {
+            const rowDiv = document.createElement("div");
+            rowDiv.className = "message-row michael-row";
+            rowDiv.innerHTML = `
+                        <img src="images/profile_michael.png" alt="Michael" class="chat-avatar">
+                        <div class="message-content-wrapper">
+                            <div class="message-bubble">
+                                <span class="msg-sender" style="color: #67e8f9;">Michael</span>
+                                ${escapeHTML(data.text)}
+                                <span class="msg-meta">Just Now</span>
+                            </div>
+                        </div>
+                    `;
+            thread.appendChild(rowDiv);
+            thread.scrollTop = thread.scrollHeight;
+          }
+        }
+      });
+
+      // Panel Management Logic
+      function openGradingPanel(id) {
+        let queue =
+          JSON.parse(localStorage.getItem("portal_submissions")) || [];
+        activeGradingItem = queue.find((x) => x.id === id);
+
+        if (activeGradingItem) {
+          document.getElementById("panelTitle").textContent =
+            `Evaluate Assignment: ${activeGradingItem.taskType}`;
+
+          let linkString =
+            activeGradingItem.taskType === "YouTube Video"
+              ? `<a href="${escapeHTML(activeGradingItem.payload)}" target="_blank" class="submission-link">${escapeHTML(activeGradingItem.payload)}</a>`
+              : `<a href="uploads/${escapeHTML(activeGradingItem.payload)}" target="_blank" class="submission-link">📂 Open ${escapeHTML(activeGradingItem.payload)}</a>`;
+
+          document.getElementById("panelMeta").innerHTML =
+            `<strong>Active Student:</strong> ${activeGradingItem.student} | <strong>File Asset:</strong> ${linkString}`;
+          document.getElementById("gradingPanel").style.display = "block";
+          document
+            .getElementById("gradingPanel")
+            .scrollIntoView({ behavior: "smooth" });
+        }
+      }
+
+      function closeGradingPanel() {
+        document.getElementById("gradingPanel").style.display = "none";
+        document.getElementById("studentGrade").value = "";
+        document.getElementById("teacherNotes").value = "";
+        activeGradingItem = null;
+      }
+
+      function processGradeSubmission() {
+        const grade = document.getElementById("studentGrade").value;
+        const notes = document.getElementById("teacherNotes").value.trim();
+
+        if (!grade || !notes) {
+          alert(
+            "Please choose a grade value and fill out your evaluation text note box first!",
+          );
+          return;
+        }
+
+        let queue =
+          JSON.parse(localStorage.getItem("portal_submissions")) || [];
+        queue = queue.filter((x) => x.id !== activeGradingItem.id);
+        localStorage.setItem("portal_submissions", JSON.stringify(queue));
+
+        localStorage.setItem(
+          "grade_broadcast_trigger",
+          JSON.stringify({
+            taskType: activeGradingItem.taskType,
+            grade: grade,
+            notes: notes,
+            timestamp: Date.now(),
+          }),
+        );
+
+        closeGradingPanel();
+        renderQueue();
+        alert("Evaluation report filed successfully! Stored records cleared.");
+      }
+
+      function marySendChat() {
+        const input = document.getElementById("maryReplyText");
+        if (input.value.trim() !== "") {
+          const text = input.value;
+
+          const thread = document.getElementById("maryChatThread");
+          if (thread) {
+            const rowDiv = document.createElement("div");
+            rowDiv.className = "message-row mary-row";
+            rowDiv.innerHTML = `
+                        <div class="message-content-wrapper">
+                            <div class="message-bubble">
+                                <span class="msg-sender" style="color: var(--accent-blue);">Guro Mary</span>
+                                ${escapeHTML(text)}
+                                <span class="msg-meta">Just Now</span>
+                            </div>
+                        </div>
+                        <img src="images/profile_mary.png" alt="Mary" class="chat-avatar">
+                    `;
+            thread.appendChild(rowDiv);
+            thread.scrollTop = thread.scrollHeight;
+          }
+
+          localStorage.setItem(
+            "mary_msg_trigger",
+            JSON.stringify({
+              text: text,
+              timestamp: Date.now(),
+            }),
+          );
+
+          input.value = "";
+        }
+      }
+
+      function escapeHTML(str) {
+        return str.replace(
+          /[&<>'"]/g,
+          (tag) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              "'": "&#39;",
+              '"': "&quot;",
+            })[tag] || tag,
+        );
+      }
+
+      function toggleExamFormOptions(val) {
+        document.getElementById("mcOptionsWrapper").style.display =
+          val === "MC" ? "flex" : "none";
+      }
+
+      function deployOfficialExam() {
+        const passage = document
+          .getElementById("examReadingPassage")
+          .value.trim();
+        const question = document
+          .getElementById("examQuestionText")
+          .value.trim();
+        const type = document.getElementById("examQuestionType").value;
+        const answer = document.getElementById("examAnswerKey").value.trim();
+        const minutes =
+          parseInt(document.getElementById("examTimerDuration").value) || 5;
+
+        if (!passage || !question || !answer) {
+          alert(
+            "Please completely configure the reading context, evaluation question, and answer token keys first!",
+          );
+          return;
+        }
+
+        let dynamicOptions = ["True", "False"];
+        if (type === "MC") {
+          const o1 = document.getElementById("opt1").value.trim();
+          const o2 = document.getElementById("opt2").value.trim();
+          const o3 = document.getElementById("opt3").value.trim();
+          if (!o1 || !o2 || !o3) {
+            alert(
+              "Please complete all three multiple-choice text parameter spaces!",
+            );
+            return;
+          }
+          dynamicOptions = [o1, o2, o3];
+        }
+
+        let stagedQuestionsCollection = [];
+
+        function toggleExamFormOptions(val) {
+          document.getElementById("mcOptionsWrapper").style.display =
+            val === "MC" ? "flex" : "none";
+        }
+
+        function addQuestionToExamStagingPool() {
+          const text = document.getElementById("examQuestionText").value.trim();
+          const type = document.getElementById("examQuestionType").value;
+          const answer = document.getElementById("examAnswerKey").value.trim();
+
+          if (!text || !answer) {
+            alert(
+              "Please complete both the question text and answer key areas!",
+            );
+            return;
+          }
+
+          let options = ["True", "False"];
+          if (type === "MC") {
+            const o1 = document.getElementById("opt1").value.trim();
+            const o2 = document.getElementById("opt2").value.trim();
+            const o3 = document.getElementById("opt3").value.trim();
+            if (!o1 || !o2 || !o3) {
+              alert("Please complete all multiple choice inputs!");
+              return;
+            }
+            options = [o1, o2, o3];
+          }
+
+          // Save item parameters inside the tracking array loop
+          stagedQuestionsCollection.push({
+            question: text,
+            options: options,
+            correctAnswer: answer,
+          });
+
+          // Update Mary's tracking card display
+          const trackerBox = document.getElementById("stagedQuestionsTracker");
+          const listElement = document.getElementById("stagedList");
+
+          trackerBox.style.display = "flex";
+          const li = document.createElement("li");
+          li.textContent =
+            text.length > 40 ? text.substring(0, 40) + "..." : text;
+          listElement.appendChild(li);
+
+          // Reset items parameters for seamless sequential typing
+          document.getElementById("examQuestionText").value = "";
+          document.getElementById("examAnswerKey").value = "";
+          document.getElementById("opt1").value = "";
+          document.getElementById("opt2").value = "";
+          document.getElementById("opt3").value = "";
+        }
+
+        function deployOfficialExam() {
+          const passage = document
+            .getElementById("examReadingPassage")
+            .value.trim();
+          const minutes =
+            parseInt(document.getElementById("examTimerDuration").value) || 5;
+
+          if (!passage) {
+            alert("Please input the baseline reading passage context first!");
+            return;
+          }
+          if (stagedQuestionsCollection.length === 0) {
+            alert(
+              "You must add at least one question to your exam pack pool first!",
+            );
+            return;
+          }
+
+          // Hand over the array parameters straight to storage broadcast channels
+          localStorage.setItem(
+            "guro_mary_live_exam",
+            JSON.stringify({
+              passage: passage,
+              questionsList: stagedQuestionsCollection,
+              durationMinutes: minutes,
+              timestamp: Date.now(),
+            }),
+          );
+
+          // Reset local cache parameters
+          stagedQuestionsCollection = [];
+          document.getElementById("stagedList").innerHTML = "";
+          document.getElementById("stagedQuestionsTracker").style.display =
+            "none";
+          document.getElementById("examReadingPassage").value = "";
+
+          alert(
+            `Official Multi-Question Exam deployed successfully! Michael's page is syncing.`,
+          );
+        }
+
+        // Broadcast the full exam configuration matrix payload token to Michael's screen registers
+        localStorage.setItem(
+          "guro_mary_live_exam",
+          JSON.stringify({
+            passage: passage,
+            question: question,
+            options: dynamicOptions,
+            correctAnswer: answer,
+            durationMinutes: minutes,
+            timestamp: Date.now(),
+          }),
+        );
+
+        alert(
+          `Official Exam deployed successfully! Michael's dashboard terminal has been forced into test synchronization status.`,
+        );
+      }
+
+      // Append this target segment block right inside Michael's existing background storage block
+      if (e.key === "guro_mary_live_exam" && e.newValue) {
+        alert(
+          "⚠️ EMERGENCY BREAK: Guro Mary has administered an official timed examination! Routing you to the exam grid workspace right now.",
+        );
+        window.location.href = "guro_mary_exam.html";
+      }
+
+      window.onload = renderQueue;
+
+      let examData = null;
+      let currentItemIndex = 0;
+      let studentResponsesLog = [];
+      let countdownTimer = null;
+      let totalSecondsRemaining = 0;
+
+      function loadMaryExamContext() {
+        examData = JSON.parse(localStorage.getItem("guro_mary_live_exam"));
+
+        if (!examData || !examData.questionsList) {
+          document.body.innerHTML = `
+            <div style="text-align:center; padding: 100px 20px; font-family:sans-serif; color: var(--text-muted); background:#0f172a; height:100vh; box-sizing:border-box;">
+                <h2 style="color:white;">No active examination parameters detected inside the portal framework.</h2>
+                <a href="michael_dashboard.html" style="color: var(--accent-blue); text-decoration:none; font-weight:bold;">← Return to Student Dashboard</a>
+            </div>`;
+          return;
+        }
+
+        // Map reading text passage
+        document.getElementById("passageDisplayField").innerHTML =
+          examData.passage;
+
+        // Turn on global timed metrics clocks
+        totalSecondsRemaining = examData.durationMinutes * 60;
+        startCountdownLoop();
+
+        // Render the initial question item
+        renderCurrentExamQuestion();
+      }
+
+      function renderCurrentExamQuestion() {
+        const currentQuestionItem = examData.questionsList[currentItemIndex];
+
+        // Update the question headers section text indicators
+        document
+          .getElementById("examResponseCard")
+          .querySelector("h2").textContent =
+          `✏️ Question ${currentItemIndex + 1} of ${examData.questionsList.length}`;
+        document.getElementById("questionDisplayField").innerHTML =
+          currentQuestionItem.question;
+
+        const grid = document.getElementById("examOptionsGrid");
+        grid.innerHTML = "";
+
+        // Generate choice click targets
+        currentQuestionItem.options.forEach((opt) => {
+          const b = document.createElement("button");
+          b.className = "option-btn";
+          b.textContent = opt;
+          b.onclick = () => saveAnswerSelectionState(b, opt);
+          grid.appendChild(b);
+        });
+
+        document.getElementById("finalExamSubmitBtn").style.display = "none";
+      }
+
+      function saveAnswerSelectionState(element, val) {
+        const buttons = document.querySelectorAll(".option-btn");
+        buttons.forEach((b) => (b.style.borderColor = "#475569"));
+        element.style.borderColor = "var(--accent-blue)";
+
+        // Stash responses temporary metrics parameters
+        studentResponsesLog[currentItemIndex] = val;
+
+        document.getElementById("finalExamSubmitBtn").style.display = "block";
+
+        // Adjust button text layout depending on if there are more steps
+        if (currentItemIndex + 1 < examData.questionsList.length) {
+          document.getElementById("finalExamSubmitBtn").textContent =
+            "Save & Next Question →";
+          document.getElementById("finalExamSubmitBtn").style.backgroundColor =
+            "var(--accent-blue)";
+        } else {
+          document.getElementById("finalExamSubmitBtn").textContent =
+            "🔒 Turn In Official Examination";
+          document.getElementById("finalExamSubmitBtn").style.backgroundColor =
+            "var(--success-green)";
+        }
+      }
+
+      function handleExamNavigationAdvance() {
+        if (currentItemIndex + 1 < examData.questionsList.length) {
+          currentItemIndex++;
+          renderCurrentExamQuestion();
+        } else {
+          submitFinishedExam(false);
+        }
+      }
+
+      function startCountdownLoop() {
+        updateClockDisplay();
+        countdownTimer = setInterval(() => {
+          totalSecondsRemaining--;
+          updateClockDisplay();
+
+          if (totalSecondsRemaining <= 0) {
+            clearInterval(countdownTimer);
+            alert(
+              "⏰ TIME IS UP! Processing immediate automated turn-in sequence...",
+            );
+            submitFinishedExam(true);
+          }
+        }, 1000);
+      }
+
+      function updateClockDisplay() {
+        const mins = Math.floor(totalSecondsRemaining / 60);
+        const secs = totalSecondsRemaining % 60;
+        const formattedMins = mins < 10 ? "0" + mins : mins;
+        const formattedSecs = secs < 10 ? "0" + secs : secs;
+
+        const element = document.getElementById("examClockDisplay");
+        element.textContent = `${formattedMins}:${formattedSecs}`;
+
+        if (totalSecondsRemaining < 60) {
+          element.style.color = "var(--danger-red)";
+        }
+      }
+
+      function submitFinishedExam(forcedTimeout = false) {
+        clearInterval(countdownTimer);
+
+        let correctTallyCount = 0;
+
+        // Verify each question answer sequence loop parameters
+        examData.questionsList.forEach((item, index) => {
+          const studentChoice = studentResponsesLog[index] || "";
+          if (
+            studentChoice.toLowerCase() === item.correctAnswer.toLowerCase()
+          ) {
+            correctTallyCount++;
+          }
+        });
+
+        const totalQuestions = examData.questionsList.length;
+        const percentageScore = Math.round(
+          (correctTallyCount / totalQuestions) * 100,
+        );
+
+        let finalGradeValue = "Passed";
+        if (percentageScore >= 90) finalGradeValue = "A+ (Excellent)";
+        else if (percentageScore < 70) finalGradeValue = "Needs Revision";
+
+        if (forcedTimeout) finalGradeValue = "F (Timeout)";
+
+        // Send complete score tracking stats back to Mary's console
+        localStorage.setItem(
+          "grade_broadcast_trigger",
+          JSON.stringify({
+            taskType: "Official Controlled Exam",
+            grade: `${finalGradeValue} (${correctTallyCount}/${totalQuestions})`,
+            notes: `Michael finished the reading comprehension bundle scoring a final grade total of ${percentageScore}%.`,
+            timestamp: Date.now(),
+          }),
+        );
+
+        localStorage.removeItem("guro_mary_live_exam");
+
+        const workspace = document.getElementById("examResponseCard");
+        workspace.innerHTML = `
+        <div style="text-align:center; padding: 40px 0;">
+            <h3 style="font-size:1.5em; color: var(--success-green); margin-top:0;">Exam Turned In! 🔒</h3>
+            <p style="color: var(--text-muted); font-size:0.95em; line-height:1.5; margin-bottom:25px;">
+                Your multi-question evaluation answers have been securely evaluated and logged right to Guro Mary's portal tracking loops.
+            </p>
+            <a href="michael_dashboard.html" style="background: var(--accent-blue); padding:10px 20px; border-radius:6px; color:white; text-decoration:none; font-weight:600; display:inline-block;">Return to Dashboard</a>
+        </div>`;
+      }
+
+      // Bind navigation click event loop straight to our central advanced step processing function
+      document.getElementById("finalExamSubmitBtn").onclick =
+        handleExamNavigationAdvance;
+
+      window.onload = loadMaryExamContext;
+    </script>
+  </body>
+</html>

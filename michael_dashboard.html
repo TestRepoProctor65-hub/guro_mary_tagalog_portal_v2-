@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michael's Study Dashboard</title>
+    <style>
+        :root {
+            --primary-dark: #1e293b;
+            --accent-blue: #0ea5e9;
+            --success-green: #10b981;
+            --bg-slate: #0f172a;
+            --card-bg: #1e293b;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --yt-red: #ef4444;
+            --danger-red: #f43f5e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-slate);
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Top System Clock Banner Bar */
+        .top-time-bar {
+            background-color: #2b5c8f;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 0.95em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .banner-container {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            margin-bottom: 30px;
+            border: 1px solid #334155;
+        }
+
+        .banner-image {
+            width: 100%;
+            height: auto;
+            max-height: 380px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-container { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #334155;
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            color: var(--accent-blue);
+            margin-top: 0;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 12px;
+            font-weight: 600;
+        }
+
+        /* Analytics Grid Styling Components */
+        .analytics-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        @media (max-width: 500px) {
+            .analytics-row { grid-template-columns: 1fr; }
+        }
+        .metric-box {
+            background: #111827;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #334155;
+        }
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: white;
+            margin: 5px 0;
+        }
+        .metric-label {
+            font-size: 0.8em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .progress-bar-bg {
+            background: #334155;
+            height: 6px;
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            background: var(--success-green);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .item-row {
+            background: #111827;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--accent-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .row-info-wrapper {
+            flex: 1;
+        }
+
+        .submission-interface {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .input-field {
+            flex: 1;
+            min-width: 200px;
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            padding: 10px;
+            color: white;
+            font-size: 0.9em;
+        }
+
+        .input-field:focus { outline: none; border-color: var(--accent-blue); }
+
+        .file-label {
+            background: #334155;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            border: 1px solid #475569;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn {
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .btn:hover { background-color: #0284c7; }
+        .btn-submit { background-color: var(--success-green); }
+        .btn-submit:hover { background-color: #059669; }
+        
+        .btn-danger { background-color: #334155; border: 1px solid var(--danger-red); color: var(--danger-red); }
+        .btn-danger:hover { background-color: var(--danger-red); color: white; }
+
+        .badge {
+            background-color: #334155;
+            color: var(--text-light);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .vocab-box {
+            background: #111827;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #475569;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .tagalog-word {
+            font-size: 1.4em;
+            color: var(--success-green);
+            font-weight: bold;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- System Clock Header Panel -->
+    <div class="top-time-bar" id="liveSystemClock">
+        Loading Portal Session Timestamp...
+    </div>
+
+    <div class="dashboard-container">
+        <div class="banner-container">
+            <img src="images/michael_banner.png" alt="Michael's Study Dashboard Banner" class="banner-image">
+        </div>
+
+        <div class="grid-container">
+            <!-- Left Main Column Content Area -->
+            <main class="main-content">
+                
+                <!-- NEW FEATURE: Interactive Performance Metrics Analytics Card -->
+                <section class="card">
+                    <h2>Portal Progress & Analytics</h2>
+                    <div class="analytics-row">
+                        <div class="metric-box">
+                            <div class="metric-label">Course Grade Tracker</div>
+                            <div class="metric-value" id="analyticsGPA">100%</div>
+                            <div class="progress-bar-bg"><div class="progress-bar-fill" id="gpaBar" style="background:var(--accent-blue);"></div></div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="metric-label">Assignments Completed</div>
+                            <div class="metric-value" id="analyticsCompleted">0 / 2</div>
+                            <div class="progress-bar-bg"><div class="progress-bar-fill" id="completedBar"></div></div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="metric-label">Exam Room Score</div>
+                            <div class="metric-value" id="analyticsExam">--</div>
+                            <div class="progress-bar-bg"><div class="progress-bar-fill" id="examBar" style="background:#a855f7;"></div></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <h2>Active Assignments & Deliverables</h2>
+                    
+                    <!-- YouTube Video Assignment Card Row -->
+                    <div class="item-row" id="row-youtube" style="border-left-color: var(--yt-red);">
+                        <div class="row-info-wrapper">
+                            <span class="badge" style="background-color: rgba(239, 68, 68, 0.2); color: var(--yt-red);">YouTube Submission</span>
+                            <h3 style="margin: 8px 0 4px 0; font-size: 1.1em;">Pronunciation & Speaking Review Video</h3>
+                            <p style="margin: 0; font-size: 0.9em; color: var(--text-muted);" id="yt-desc">Paste your private or unlisted YouTube assignment URL below for Mary to check.</p>
+                            
+                            <div class="submission-interface" id="yt-form">
+                                <input type="url" id="yt-url" class="input-field" placeholder="https://www.youtube.com/watch?v=...">
+                                <button class="btn btn-submit" onclick="submitHomework('YouTube Video', 'yt-url')">Submit Video</button>
+                            </div>
+                        </div>
+                        <div id="yt-delete-space"></div>
+                    </div>
+
+                    <!-- PDF Document Assignment Card Row -->
+                    <div class="item-row" id="row-pdf" style="border-left-color: #a855f7;">
+                        <div class="row-info-wrapper">
+                            <span class="badge" style="background-color: rgba(168, 85, 247, 0.2); color: #a855f7;">PDF Assignment</span>
+                            <h3 style="margin: 8px 0 4px 0; font-size: 1.1em;">Written Sheets & Affixes Grammar Log</h3>
+                            <p style="margin: 0; font-size: 0.9em; color: var(--text-muted);" id="pdf-desc">Upload your finished text work documents directly to the evaluation queue.</p>
+                            
+                            <div class="submission-interface" id="pdf-form">
+                                <label class="file-label">
+                                    <input type="file" id="pdf-file" accept=".pdf" style="display: none;" onchange="document.getElementById('file-chosen').textContent = this.files[0] ? this.files[0].name : 'No file chosen'">
+                                    📂 Choose PDF File
+                                </label>
+                                <span id="file-chosen" style="color: var(--text-muted); font-size: 0.9em; align-self: center; margin-left: 5px;">No file chosen</span>
+                                <button class="btn btn-submit" style="margin-left: auto;" onclick="submitHomework('PDF Document', 'pdf-file')">Upload Document</button>
+                            </div>
+                        </div>
+                        <div id="pdf-delete-space"></div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Right Sidebar Column Area -->
+            <aside class="sidebar">
+                <section class="card">
+                    <h2>Wika ng Araw (Word of the Day)</h2>
+                    <div class="vocab-box">
+                        <div class="tagalog-word">Matuto</div>
+                        <div style="color: var(--text-muted); font-size: 0.9em; font-style: italic; margin-bottom: 8px;">Verb • to learn</div>
+                        <p style="margin: 5px 0 0 0; font-size: 0.95em;">"Natuto ako ng Tagalog nitong Sabado."</p>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <h2>Guro Mary Feedback Report</h2>
+                    <p id="feedback-box" style="font-size: 0.9em; color: var(--text-muted); line-height: 1.5; background: #111827; padding: 12px; border-radius: 6px; border-left: 3px solid var(--success-green); margin: 0 0 15px 0;">
+                        <strong style="color: var(--text-light);">Latest note:</strong> "Magaling! Work closely on the alignment of your prefix changes in the text sheet layout."
+                    </p>
+                    <a href="chat.html" class="btn" style="width: 100%; box-sizing: border-box;">Open Chat Channel</a>
+                </section>
+
+                <!-- Interactive Test Room Navigation Module -->
+                <section class="card" style="border-color: var(--success-green); background: rgba(16, 185, 129, 0.05);">
+                    <h3 style="margin-top: 0; font-size: 1.1em; color: var(--success-green);">Magsanay Tayo! (Let's Practice)</h3>
+                    <p style="font-size: 0.85em; color: var(--text-muted); margin: 0 0 12px 0;">Test your mastery of conversational affixes, root verbs, and sentence markers in the interactive exam workspace.</p>
+                    <a href="test_room.html" class="btn btn-submit" style="width: 100%; box-sizing: border-box; text-decoration: none;">🎯 Enter Test Room</a>
+                </section>
+
+                <!-- Developer Tools Utility Box to Reset Demo States -->
+                <section class="card" style="border-color: #475569; background: rgba(17, 24, 39, 0.5);">
+                    <h3 style="margin-top: 0; font-size: 1em; color: var(--text-muted);">Console Utilities</h3>
+                    <button class="btn btn-danger" style="width: 100%; padding: 8px;" onclick="clearEntireDashboard()">Clear & Reset All Data</button>
+                </section>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        // System Clock Initialization Engine
+        function updateLiveClock() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString('en-US', options);
+            const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            document.getElementById('liveSystemClock').textContent = `📅 ${dateString} | ⏰ ${timeString} (Manila Time)`;
+        }
+        setInterval(updateLiveClock, 1000);
+        updateLiveClock();
+
+        // MATH ENGINE: Calculates metrics percentages based on localStorage data
+        function recalculatePortalAnalyticsMetrics() {
+            let completedCount = 0;
+            let totalGradePoints = 0;
+            let gradedItemsCount = 0;
+
+            // Check completion files
+            const ytFinished = JSON.parse(localStorage.getItem('finalized_status_YouTube Video'));
+            const pdfFinished = JSON.parse(localStorage.getItem('finalized_status_PDF Document'));
+            const examFinished = JSON.parse(localStorage.getItem('grade_broadcast_trigger'));
+
+            if (ytFinished) completedCount++;
+            if (pdfFinished) completedCount++;
+
+            // Map and parse text grades into calculation values
+            [ytFinished, pdfFinished].forEach(item => {
+                if (item && item.grade) {
+                    gradedItemsCount++;
+                    if (item.grade.includes("A+")) totalGradePoints += 100;
+                    else if (item.grade.includes("A")) totalGradePoints += 95;
+                    else if (item.grade.includes("B+")) totalGradePoints += 88;
+                    else if (item.grade.includes("B")) totalGradePoints += 83;
+                    else if (item.grade.includes("C")) totalGradePoints += 75;
+                }
+            });
+
+            // Process Exam components
+            if (examFinished && examFinished.taskType === "Official Controlled Exam") {
+                document.getElementById('analyticsExam').textContent = examFinished.grade;
+                // Extract score percentage string (e.g., "A+ (3/3)" or similar)
+                let fillPercent = examFinished.grade.includes("A+") ? 100 : examFinished.grade.includes("Needs Revision") ? 50 : 0;
+                document.getElementById('examBar').style.width = fillPercent + "%";
+            } else {
+                document.getElementById('analyticsExam').textContent = "--";
+                document.getElementById('examBar').style.width = "0%";
+            }
+
+            // Render Assignment Tracker numbers
+            document.getElementById('analyticsCompleted').textContent = `${completedCount} / 2`;
+            const completionPercent = (completedCount / 2) * 100;
+            document.getElementById('completedBar').style.width = completionPercent + "%";
+
+            // Render Overall Course GPA tracker
+            if (gradedItemsCount > 0) {
+                const finalGPA = Math.round(totalGradePoints / gradedItemsCount);
+                document.getElementById('analyticsGPA').textContent = finalGPA + "%";
+                document.getElementById('gpaBar').style.width = finalGPA + "%";
+            } else {
+                document.getElementById('analyticsGPA').textContent = "100%";
+                document.getElementById('gpaBar').style.width = "100%";
+            }
+        }
+
+        // Standard assignment packaging engine
+        function submitHomework(type, inputId) {
+            const inputElement = document.getElementById(inputId);
+            let payloadValue = "";
+
+            if (type === 'YouTube Video') {
+                payloadValue = inputElement.value.trim();
+                if (!payloadValue) { alert("Please input a valid submission URL first!"); return; }
+            } else {
+                payloadValue = inputElement.files[0] ? inputElement.files[0].name : "";
+                if (!payloadValue) { alert("Please select a valid PDF file layout sheet first!"); return; }
+            }
+
+            let queue = JSON.parse(localStorage.getItem('portal_submissions')) || [];
+            
+            const newSubmission = {
+                id: 'sub-' + Date.now(),
+                student: 'Michael Proctor',
+                taskType: type,
+                payload: payloadValue,
+                timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            };
+
+            queue.push(newSubmission);
+            localStorage.setItem('portal_submissions', JSON.stringify(queue));
+
+            updateRowToPending(type, payloadValue);
+            alert(`${type} safely logged inside Guro Mary's evaluation stream queue!`);
+            recalculatePortalAnalyticsMetrics();
+        }
+
+        function updateRowToPending(type, value) {
+            if (type === 'YouTube Video') {
+                document.getElementById('yt-form').style.display = 'none';
+                document.getElementById('yt-delete-space').innerHTML = ""; 
+                document.getElementById('yt-desc').innerHTML = `<span style="color: #eab308; font-weight:bold;">⏳ Sent for Review:</span> Link: <em style="color:#38bdf8;">${value}</em>`;
+                document.getElementById('row-youtube').style.borderLeftColor = '#eab308';
+            } else {
+                document.getElementById('pdf-form').style.display = 'none';
+                document.getElementById('pdf-delete-space').innerHTML = ""; 
+                document.getElementById('pdf-desc').innerHTML = `<span style="color: #eab308; font-weight:bold;">⏳ Sent for Review:</span> Document: <em style="color:#c084fc;">${value}</em>`;
+                document.getElementById('row-pdf').style.borderLeftColor = '#eab308';
+            }
+        }
+
+        // Processing evaluated report markers when Mary pushes a new grade score
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'grade_broadcast_trigger' && e.newValue) {
+                const gradeData = JSON.parse(e.newValue);
+                
+                alert(`Guro Mary has evaluated your ${gradeData.taskType}!\nGrade Earned: ${gradeData.grade}`);
+                
+                if (gradeData.taskType !== "Official Controlled Exam") {
+                    renderCompletedState(gradeData.taskType, gradeData.grade, gradeData.notes);
+                }
+                recalculatePortalAnalyticsMetrics();
+            }
+            if (e.key === 'portal_submissions' && !e.newValue) {
+                location.reload();
+            }
+        });
+
+        // Dynamic Completion state handler featuring separate removal controls
+        function renderCompletedState(type, grade, notes) {
+            const isYoutube = (type === 'YouTube Video');
+            const targetRow = isYoutube ? 'row-youtube' : 'row-pdf';
+            const targetDesc = isYoutube ? 'yt-desc' : 'pdf-desc';
+            const targetForm = isYoutube ? 'yt-form' : 'pdf-form';
+            const deleteSpace = isYoutube ? 'yt-delete-space' : 'pdf-delete-space';
+
+            document.getElementById(targetForm).style.display = 'none';
+            document.getElementById(targetRow).style.borderLeftColor = '#10b981';
+            document.getElementById(targetDesc).innerHTML = `<span style="color: #10b981; font-weight:bold;">✓ Evaluated [Grade: ${grade}]:</span> ${escapeHTML(notes)}`;
+
+            document.getElementById(deleteSpace).innerHTML = `
+                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8em;" onclick="removeSingleAssignment('${type}')">Clear Task</button>
+            `;
+
+            document.getElementById('feedback-box').innerHTML = `<strong style="color: #f8fafc;">Latest Report [${type}]:</strong> "${escapeHTML(notes)}"`;
+            
+            localStorage.removeItem('pending_status_' + type);
+            localStorage.setItem('finalized_status_' + type, JSON.stringify({grade: grade, notes: notes}));
+        }
+
+        // Removes a single completed slot and resets the row back to a blank input field form
+        function removeSingleAssignment(type) {
+            const isYoutube = (type === 'YouTube Video');
+            const targetRow = isYoutube ? 'row-youtube' : 'row-pdf';
+            const targetDesc = isYoutube ? 'yt-desc' : 'pdf-desc';
+            const targetForm = isYoutube ? 'yt-form' : 'pdf-form';
+            const deleteSpace = isYoutube ? 'yt-delete-space' : 'pdf-delete-space';
+
+            localStorage.removeItem('finalized_status_' + type);
+
+            document.getElementById(targetForm).style.display = 'flex';
+            document.getElementById(deleteSpace).innerHTML = "";
+            document.getElementById(targetRow).style.borderLeftColor = isYoutube ? 'var(--yt-red)' : '#a855f7';
+            
+            if(isYoutube) {
+                document.getElementById('yt-url').value = "";
+                document.getElementById('yt-desc').textContent = "Paste your private or unlisted YouTube assignment URL below for Mary to check.";
+            } else {
+                document.getElementById('pdf-file').value = "";
+                document.getElementById('file-chosen').textContent = "No file chosen";
+                document.getElementById('pdf-desc').textContent = "Upload your finished text work documents directly to the evaluation queue.";
+            }
+            
+            alert(`${type} cleared out! The dashboard slot has been freed up for new files.`);
+            recalculatePortalAnalyticsMetrics();
+        }
+
+        // Master tool to clean up all storage logs at once
+        function clearEntireDashboard() {
+            if(confirm("Are you sure you want to reset all tracking history arrays? This will clear both active slots.")) {
+                localStorage.clear(); // Complete reset across modules
+                location.reload();
+            }
+        }
+
+        // Document initialization state checkpoint sweeps
+        window.onload = function() {
+            let queue = JSON.parse(localStorage.getItem('portal_submissions')) || [];
+            queue.forEach(item => {
+                if (item.student === 'Michael Proctor') {
+                    updateRowToPending(item.taskType, item.payload);
+                    localStorage.setItem('pending_status_' + item.taskType, item.payload);
+                }
+            });
+
+            ['YouTube Video', 'PDF Document'].forEach(type => {
+                const finishedData = JSON.parse(localStorage.getItem('finalized_status_' + type));
+                if(finishedData) {
+                    renderCompletedState(type, finishedData.grade, finishedData.notes);
+                }
+            });
+
+            // Initialize analytics calculation algorithms values
+            recalculatePortalAnalyticsMetrics();
+        };
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+        }
+    </script>
+</body>
+</html>

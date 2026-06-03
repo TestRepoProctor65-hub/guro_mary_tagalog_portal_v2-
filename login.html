@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guro Mary's Tagalog Portal - Gateway</title>
+    <style>
+        :root {
+            --primary-color: #2c5282;
+            --secondary-color: #3182ce;
+            --text-dark: #2d3748;
+            --bg-light: #f7fafc;
+            --white: #ffffff;
+            --accent-gold: #ecc94b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Top Live Bar for Date & Time */
+        .datetime-bar {
+            background-color: var(--primary-color);
+            color: var(--white);
+            text-align: center;
+            padding: 10px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Main Content Container */
+        .main-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* Login Card */
+        .login-card {
+            background: var(--white);
+            width: 100%;
+            max-width: 700px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        /* Banner Image Wrapper */
+        .banner-wrapper {
+            width: 100%;
+            overflow: hidden;
+            border-bottom: 4px solid var(--accent-gold);
+        }
+
+        .banner-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Card Body Content */
+        .card-content {
+            padding: 40px 45px;
+            text-align: center;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        /* Instructional Text styling */
+        .instruction-text {
+            font-size: 1.05rem;
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        /* Form Layout */
+        .gateway-form {
+            text-align: left;
+            max-width: 400px;
+            margin: 0 auto 40px auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            color: var(--text-dark);
+            background-color: #f8fafc;
+            transition: all 0.2s ease-in-out;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            background-color: var(--white);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+        }
+
+        select.form-control {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234a5568'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            background-color: var(--accent-gold);
+            color: #744210;
+            border: none;
+            padding: 14px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background-color: #d69e2e;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Lower Utility Row (Flags vs Assistant) */
+        .bottom-utility-grid {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 25px;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            text-align: left;
+        }
+
+        .utility-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .utility-column.right-side {
+            border-left: 1px solid #edf2f7;
+            padding-left: 20px;
+            align-items: center;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        /* National Flag Styling */
+        .flags-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .flag-box {
+            flex: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .flag-image {
+            width: 100%;
+            max-width: 120px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid #edf2f7;
+        }
+
+        .flag-label {
+            font-size: 0.75rem;
+            color: #718096;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        /* AI Assistant Roberto Styling */
+        .assistant-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            position: relative;
+        }
+
+        .speech-bubble {
+            position: relative;
+            background: #ebf8ff;
+            border: 1px solid #bee3f8;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 0.85rem;
+            color: #2b6cb0;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            text-align: center;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            width: 10px;
+            height: 10px;
+            background: #ebf8ff;
+            border-right: 1px solid #bee3f8;
+            border-bottom: 1px solid #bee3f8;
+        }
+
+        .assistant-image {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 4px;
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .assistant-label {
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Sticky Footer */
+        footer {
+            background-color: #1a202c;
+            color: #a0aec0;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* Responsive breakdown for mobile screens */
+        @media (max-width: 580px) {
+            .bottom-utility-grid {
+                flex-direction: column;
+                gap: 25px;
+            }
+            .utility-column.right-side {
+                border-left: none;
+                border-top: 1px solid #edf2f7;
+                padding-left: 0;
+                padding-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="datetime-bar" id="live-clock">
+        Loading date and time...
+    </div>
+
+    <div class="main-container">
+        <div class="login-card">
+            
+            <div class="banner-wrapper">
+              <img src="images/guro_mary_number_3.jpg" alt="Welcome to Guro Mary's Tagalog Class" class="banner-image">  
+            </div>
+
+            <div class="card-content">
+                <h2>Portal Gateway</h2>
+
+                <p class="instruction-text">Please log into this section, either Student or Teacher.</p>
+
+                <form class="gateway-form" onsubmit="handlePortalLogin(event)">
+                    
+                    <div class="form-group">
+                        <label for="user-profile">Select User Profile</label>
+                        <select id="user-profile" class="form-control" required>
+                            <option value="" disabled selected>Choose profile...</option>
+                            <option value="michael">Student Michael</option>
+                            <option value="mary">Guro Mary</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="user-password">Password / PIN</label>
+                        <input type="password" id="user-password" class="form-control" placeholder="••••••••" required>
+                    </div>
+
+                    <button class="submit-btn" type="submit">Enter Portal</button>
+                </form>
+
+                <div class="bottom-utility-grid">
+                    
+                    <div class="utility-column">
+                        <p class="section-title">Cultural & National References</p>
+                        <div class="flags-container">
+                            <div class="flag-box">
+                                <img src="images/filipino_flag.png" alt="National Flag of the Philippines" class="flag-image">
+                                <div class="flag-label">National Flag</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="utility-column right-side">
+                        <p class="section-title">AI Assistant Portal</p>
+                        <div class="assistant-box">
+                            <div class="speech-bubble">
+                                Hello I am Roberto, I am working with Guro Mary to assist you with all your Tagalog translations.
+                            </div>
+                            <img src="images/ai_robot.png" alt="AI Tagalog Robot Assistant" class="assistant-image">
+                            <div class="assistant-label">Roberto</div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        AI Tagalog Agent
+    </footer>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: true 
+            };
+            document.getElementById('live-clock').textContent = now.toLocaleString('en-US', options);
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // Core dynamic portal redirection logic
+        function handlePortalLogin(event) {
+            event.preventDefault(); // Prevents page reload
+            
+            // Capture user selection element values
+            const selectedProfile = document.getElementById('user-profile').value;
+            
+            // Conditional dynamic routing paths
+            if (selectedProfile === 'mary') {
+                window.location.href = "mary's_dashboard.html";
+            } else if (selectedProfile === 'michael') {
+                window.location.href = 'michael_dashboard.html';
+            } else {
+                alert('Mabuhay! Please select a valid profile before continuing.');
+            }
+        }
+    </script>
+</body>
+</html>

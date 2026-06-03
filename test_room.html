@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tagalog Portal - Interactive Test Room</title>
+    <style>
+        :root {
+            --bg-slate: #0f172a;
+            --card-bg: #1e293b;
+            --accent-blue: #0ea5e9;
+            --success-green: #10b981;
+            --danger-red: #f43f5e;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-slate);
+            color: var(--text-light);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .test-container {
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            margin-bottom: 25px;
+        }
+
+        .btn-back {
+            background: #334155;
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9em;
+            border: 1px solid #475569;
+        }
+        .btn-back:hover { background: #475569; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #334155;
+            margin-bottom: 20px;
+        }
+
+        .score-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #111827;
+            padding: 12px 20px;
+            border-radius: 6px;
+            border-left: 4px solid var(--accent-blue);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* Quiz Layout Elements */
+        .question-text {
+            font-size: 1.15em;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: #111827;
+            border: 1px solid #475569;
+            color: var(--text-light);
+            padding: 14px 18px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        .option-btn:hover {
+            border-color: var(--accent-blue);
+            background: rgba(14, 165, 233, 0.05);
+        }
+
+        /* Feedback Review Indicators */
+        .feedback-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            display: none;
+            line-height: 1.4;
+        }
+        .feedback-box.correct {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success-green);
+            border: 1px solid var(--success-green);
+        }
+        .feedback-box.incorrect {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--danger-red);
+            border: 1px solid var(--danger-red);
+        }
+
+        .btn-next {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            display: none;
+            margin-left: auto;
+        }
+        .btn-next:hover { background: #0284c7; }
+    </style>
+</head>
+<body>
+
+    <div class="test-container">
+        <!-- Dashboard Top Header Bar Row Component -->
+        <header class="header-bar">
+            <h1 style="margin: 0; font-size: 1.3em; color: white;">🎯 Tagalog Workspace Test Room</h1>
+            <a href="michael_dashboard.html" class="btn-back">← Back to Dashboard</a>
+        </header>
+
+        <!-- Live Metrics Score Tracker Element -->
+        <div class="score-banner">
+            <span id="questionTracker" style="color: var(--text-muted);">Question 1 of 5</span>
+            <span id="scoreTracker" style="color: var(--accent-blue);">Score: 0/0</span>
+        </div>
+
+        <!-- Main Display Question Card Layout Component -->
+        <div class="card" id="quizWorkspaceCard">
+            <div class="question-text" id="questionField">Loading study modules evaluation structures...</div>
+            
+            <div class="options-grid" id="optionsContainer">
+                <!-- Option selection buttons dynamically outputted here -->
+            </div>
+
+            <!-- Contextual Correction Feedback Container Component -->
+            <div class="feedback-box" id="feedbackMessage"></div>
+
+            <button class="btn-next" id="nextQuestionBtn" onclick="advanceQuizQuestion()">Next Question →</button>
+        </div>
+    </div>
+
+    <script>
+        // Curated Quiz Bank covering root words, affixes, and markers
+        const quizBank = [
+            {
+                type: "MC",
+                question: "In the sentence <strong>\"Natuto ako ng Tagalog nitong Sabado\"</strong>, which word acts as the root verb meaning 'to learn'?",
+                options: ["Sabado", "Ako", "Matuto", "Tagalog"],
+                answer: "Matuto",
+                explanation: "Correct! 'Matuto' is the baseline dictionary root verb meaning 'to learn'. The prefix mutation transforms it to the past tense form 'Natuto'."
+            },
+            {
+                type: "TF",
+                question: "<strong>True or False:</strong> The standalone phrase <strong>\"Salamat opo\"</strong> is grammatically perfect and contains zero redundant words.",
+                options: ["True", "False"],
+                answer: "False",
+                explanation: "Correct! This is False. 'Opo' is a natural combination of 'oo' (yes) + 'po' (respect marker). Writing 'Salamat opo' creates an accidental redundancy. The correct form is 'Salamat po'."
+            },
+            {
+                type: "MC",
+                question: "Which Tagalog sentence marker is used to point directly to a specific direction, location, or upcoming target calendar day (like pointing to a specific <em>Sabado</em>)?",
+                options: ["Ang", "Sa", "Ng", "Si"],
+                answer: "Sa",
+                explanation: "Correct! 'Sa' is the location/direction marker used similarly to 'to', 'in', or 'at' in English tracking frames."
+            },
+            {
+                type: "TF",
+                question: "<strong>True or False:</strong> In Tagalog grammar rules, an actor-focus prefix change like <strong>'mag-'</strong> is attached directly to baseline root words to change the focal point or timing of an action.",
+                options: ["True", "False"],
+                answer: "True",
+                explanation: "Correct! This is True. Prefixes (unlapi) attach directly to verb roots to adjust tenses and sentence focus indicators dynamically."
+            },
+            {
+                type: "MC",
+                question: "Complete the respectful conversational phrase: <strong>\"Magandang umaga _____, Guro Mary!\"</strong>",
+                options: ["ng", "opo", "po", "sa"],
+                answer: "po",
+                explanation: "Correct! 'Po' is the respectful marker added seamlessly into conversational sentences when addressing teachers or elders."
+            }
+        ];
+
+        let currentIndex = 0;
+        let runningScore = 0;
+        let totalAnswered = 0;
+        let optionSelectedCheck = false;
+
+        function initializeQuizView() {
+            optionSelectedCheck = false;
+            document.getElementById('nextQuestionBtn').style.display = 'none';
+            document.getElementById('feedbackMessage').style.display = 'none';
+
+            const activeQuestion = quizBank[currentIndex];
+            
+            // Re-render tracker stats UI elements
+            document.getElementById('questionTracker').textContent = `Question ${currentIndex + 1} of ${quizBank.length}`;
+            document.getElementById('scoreTracker').textContent = `Score: ${runningScore}/${totalAnswered}`;
+            document.getElementById('questionField').innerHTML = activeQuestion.question;
+
+            // Generate clean layout interactive selection buttons
+            const optionsBox = document.getElementById('optionsContainer');
+            optionsBox.innerHTML = "";
+
+            activeQuestion.options.forEach(choice => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = choice;
+                btn.onclick = () => evaluateChosenAnswer(btn, choice, activeQuestion.answer, activeQuestion.explanation);
+                optionsBox.appendChild(btn);
+            });
+        }
+
+        function evaluateChosenAnswer(clickedBtn, choice, correctAnswer, explanation) {
+            if (optionSelectedCheck) return; // Freeze inputs once a choice is locked in
+            optionSelectedCheck = true;
+            totalAnswered++;
+
+            const feedback = document.getElementById('feedbackMessage');
+            
+            // Access all list options to visually fade non-selections out
+            const allButtons = document.querySelectorAll('.option-btn');
+            allButtons.forEach(b => b.style.opacity = "0.4");
+            clickedBtn.style.opacity = "1";
+
+            if (choice === correctAnswer) {
+                runningScore++;
+                clickedBtn.style.borderColor = "var(--success-green)";
+                clickedBtn.style.background = "rgba(16, 185, 129, 0.1)";
+                feedback.className = "feedback-box correct";
+                feedback.innerHTML = `✨ Napakahusay! (Excellent!)<br><span style="font-weight:normal; font-size:0.9em; display:block; margin-top:5px;">${explanation}</span>`;
+            } else {
+                clickedBtn.style.borderColor = "var(--danger-red)";
+                clickedBtn.style.background = "rgba(244, 63, 94, 0.1)";
+                feedback.className = "feedback-box incorrect";
+                feedback.innerHTML = `❌ Subukan Ulit (Try Again)<br><span style="font-weight:normal; font-size:0.9em; display:block; margin-top:5px;">${explanation}</span>`;
+            }
+
+            // Sync score panel metrics and turn on next directional controller button
+            document.getElementById('scoreTracker').textContent = `Score: ${runningScore}/${totalAnswered}`;
+            feedback.style.display = 'block';
+            document.getElementById('nextQuestionBtn').style.display = 'block';
+        }
+
+        function advanceQuizQuestion() {
+            if (currentIndex + 1 < quizBank.length) {
+                currentIndex++;
+                initializeQuizView();
+            } else {
+                // Render comprehensive finalized score overview card summary
+                const workspace = document.getElementById('quizWorkspaceCard');
+                const finalPercentage = Math.round((runningScore / quizBank.length) * 100);
+                
+                let performanceReview = "Keep practicing your structural layouts and vocabulary sweeps with Guro Mary!";
+                if (finalPercentage >= 80) performanceReview = "Magaling, Michael! Your understanding of conversational Tagalog syntax structures is solid.";
+
+                workspace.innerHTML = `
+                    <div style="text-align:center; padding: 20px 0;">
+                        <h3 style="font-size:1.6em; color: var(--accent-blue); margin-top:0;">Quiz Finished! 🎉</h3>
+                        <div style="font-size: 3em; font-weight:bold; color: white; margin: 15px 0;">${finalPercentage}%</div>
+                        <p style="font-size:1.1em; color: var(--text-light); max-width:500px; margin: 0 auto 25px auto;">
+                            You scored <strong>${runningScore} out of ${quizBank.length}</strong> correct definitions.<br>
+                            <span style="font-size:0.85em; color: var(--text-muted); display:block; margin-top:10px;">${performanceReview}</span>
+                        </p>
+                        <button class="btn" style="background: var(--success-green); padding: 12px 30px; border-radius:6px; font-weight:600;" onclick="location.reload()">🔄 Restart Quiz</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize quiz instance sweep tracking loops straight out of the box
+        window.onload = initializeQuizView;
+    </script>
+</body>
+</html>
